@@ -12,11 +12,16 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.log4j.Logger;
 import org.openrdf.model.Literal;
@@ -484,6 +489,39 @@ public class RdfUtil
     }
 
     return null;
+  }
+
+  public static XMLGregorianCalendar dateToXmlGregorianCalendar(Date date)
+  {
+    try
+    {
+      GregorianCalendar gc = new GregorianCalendar();
+      gc.setTime(date);
+      return DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+    }
+    catch (DatatypeConfigurationException e)
+    {
+      throw new Error("date/calendar problem", e);
+    }
+  }
+  
+  public static XMLGregorianCalendar millisecondsToXmlGregorianCalendar(long millisecondsSince1970)
+  {
+    try
+    {
+      GregorianCalendar gc = new GregorianCalendar();
+      gc.setTimeInMillis(millisecondsSince1970);
+      return DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+    }
+    catch (DatatypeConfigurationException e)
+    {
+      throw new Error("date/calendar problem", e);
+    }
+  }
+
+  public static Date xmlGregorianCalendarToDate(XMLGregorianCalendar calendar)
+  {
+    return calendar.toGregorianCalendar().getTime();
   }
   
   public static Integer getInt(RepositoryConnection connection, String query)
